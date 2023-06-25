@@ -20,8 +20,5 @@ public class BillsFeignRepository implements IBillsRepository {
         return response.getBody();
     }
 
-    public ResponseEntity getHelloBills() {
-        return iBillsFeignClient.getHelloBills();
-    }
 
 }

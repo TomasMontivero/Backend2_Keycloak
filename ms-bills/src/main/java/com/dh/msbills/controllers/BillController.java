@@ -16,9 +16,6 @@ public class BillController {
 
     private final BillService service;
 
-    // URL: http://localhost:8090/api/v1/bills/all
-    // Con user "user" (password:password), el endpoint devuelve informacion
-    // Usando "user2" (password:password), el endpoint devuelve 403 por no tener el rol USER
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<Bill>> getAll() {
@@ -37,10 +34,5 @@ public class BillController {
         return ResponseEntity.ok().body(service.findByCustomerId(customerBill));
     }
 
-    // URL: http://localhost:8090/api/v1/bills/hello
-    @GetMapping("/hello")
-    public ResponseEntity getHello() {
-        return ResponseEntity.ok("Hello Bills");
-    }
 
 }

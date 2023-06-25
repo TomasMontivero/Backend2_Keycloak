@@ -12,7 +12,8 @@ public class AccessTokenInterceptor implements RequestInterceptor {
     public void apply(RequestTemplate template) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         String accessToken = attributes.getRequest().getHeader("Authorization");
-
+        System.out.println("---- AccessTokenInterceptor accessToken:");
+        System.out.println(accessToken);
         template.header("Authorization", accessToken);
     }
 }

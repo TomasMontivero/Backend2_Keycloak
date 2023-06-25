@@ -33,8 +33,5 @@ public class UserService {
         return new UserAndBills(user.getId(), user.getUsername(), user.getEmail(), user.getFirstname(), bills);
     }
 
-    public ResponseEntity getHelloBills() {
-        return billsFeignRepository.getHelloBills();
-    }
 
 }
