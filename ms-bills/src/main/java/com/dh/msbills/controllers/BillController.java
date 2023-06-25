@@ -22,16 +22,16 @@ public class BillController {
         return ResponseEntity.ok().body(service.getAllBill());
     }
 
-    @PostMapping()
-    @PreAuthorize("hasAnyAuthority('/PROVIDERS')")
-    public ResponseEntity<Bill> save(@RequestBody  Bill bill){
-        return ResponseEntity.ok().body(service.save(bill));
-    }
-
     // URL: http://localhost:8090/api/v1/bills/findBy/Aaron
     @GetMapping("/findBy/{customerBill}")
     public ResponseEntity<List<Bill>> getAll(@PathVariable String customerBill) {
         return ResponseEntity.ok().body(service.findByCustomerId(customerBill));
+    }
+
+    @PostMapping()
+    @PreAuthorize("hasAnyAuthority('PROVIDERS')")
+    public ResponseEntity<Bill> save(@RequestBody  Bill bill){
+        return ResponseEntity.ok().body(service.save(bill));
     }
 
 
