@@ -31,13 +31,13 @@ public class OAuthFeignConfig {
         OAuthClientCredentialsFeignManager clientCredentialsFeignManager = new OAuthClientCredentialsFeignManager(authorizedClientManager(), clientRegistration);
 
         String access_token = clientCredentialsFeignManager.getAccessToken();
-
+        System.out.println("Access token: " + access_token);
         return requestTemplate -> {
             requestTemplate.header("Authorization", "Bearer " + access_token);
         };
     }
 
-    //  @Bean
+    @Bean
     OAuth2AuthorizedClientManager authorizedClientManager() {
         OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder().clientCredentials().build();
 

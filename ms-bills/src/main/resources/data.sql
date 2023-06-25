@@ -11,4 +11,4 @@ VALUES (RANDOM_UUID(), 'Aaron', 'courses/Java', 500);
 INSERT INTO public.bill (ID_BILL, CUSTOMER_BILL, PRODUCT_BILL, TOTAL_PRICE)
 VALUES (RANDOM_UUID(), 'William', 'courses/Java', 500);
 INSERT INTO public.bill (ID_BILL, CUSTOMER_BILL, PRODUCT_BILL, TOTAL_PRICE)
-VALUES ('c14e61fd-9562-41b7-9762-71031248c5b8', 'Mr User', 'courses/Java', 500);
+VALUES ('c14e61fd-9562-41b7-9762-71031248c5b8', 'user', 'courses/Java', 500);

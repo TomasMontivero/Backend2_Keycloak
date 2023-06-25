@@ -12,12 +12,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BillsFeignRepository implements IBillsRepository {
 
-    private IBillsFeignClient iBillsFeignClient;
+    private final IBillsFeignClient iBillsFeignClient;
 
     @Override
     public List<Bill> findByCustomerId(String customerId) {
         ResponseEntity<List<Bill>> response = iBillsFeignClient.getBillsByCustomerId( customerId);
         return response.getBody();
+    }
+
+    public ResponseEntity getHelloBills() {
+        return iBillsFeignClient.getHelloBills();
     }
 
 }
