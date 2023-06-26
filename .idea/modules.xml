@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Backend2_Keycloak.iml" filepath="$PROJECT_DIR$/.idea/Backend2_Keycloak.iml" />
+      <module fileurl="file://$PROJECT_DIR$/keycloak-runner/keycloak-runner.iml" filepath="$PROJECT_DIR$/keycloak-runner/keycloak-runner.iml" />
       <module fileurl="file://$PROJECT_DIR$/ms-bills/ms-bills.iml" filepath="$PROJECT_DIR$/ms-bills/ms-bills.iml" />
       <module fileurl="file://$PROJECT_DIR$/ms-discovery/ms-discovery.iml" filepath="$PROJECT_DIR$/ms-discovery/ms-discovery.iml" />
       <module fileurl="file://$PROJECT_DIR$/ms-gateway/ms-gateway.iml" filepath="$PROJECT_DIR$/ms-gateway/ms-gateway.iml" />

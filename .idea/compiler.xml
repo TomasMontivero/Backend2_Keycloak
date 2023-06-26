@@ -11,9 +11,11 @@
         <module name="ms-users" />
         <module name="ms-discovery" />
         <module name="ms-gateway" />
+        <module name="keycloak-runner" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="keycloak-runner" target="17" />
       <module name="ms-bills" target="17" />
       <module name="ms-discovery" target="17" />
       <module name="ms-gateway" target="17" />
@@ -22,6 +24,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="keycloak-runner" options="-parameters" />
       <module name="ms-bills" options="-parameters" />
       <module name="ms-discovery" options="-parameters" />
       <module name="ms-gateway" options="-parameters" />
