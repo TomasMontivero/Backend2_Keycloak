@@ -5,9 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.*;
-import org.keycloak.common.constants.ServiceAccountConstants;
 import org.keycloak.representations.idm.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -143,34 +141,19 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
         userResource2.roles().realmLevel().add(roleRepresentationList);
 
 
-        // -----------------------------------------------------
         // Assign user group to generated token
         ClientScopeResource clientScopeResource;
         String scope = "profile";
 
-        //RealmResource realmResource = keycloakAdmin.realm(realm);
-        //List<ClientScopeRepresentation> scopes = realmResource.clientScopes().findAll();
         List<ClientScopeRepresentation> scopes = realmsResource.realm(REALM_NAME).clientScopes().findAll();
         ClientScopeRepresentation clientScope = scopes.stream()
                 .filter(cs -> cs.getName().equals(scope))
                 .findFirst()
                 .orElse(null);
 
-        //String id = clientScope.getId();
-        //clientScopeResource = realmsResource.realm(REALM_NAME).clientScopes().get(id);
         clientScopeResource = realmsResource.realm(REALM_NAME).clientScopes().get(clientScope.getId());
 
-        //ProtocolMapperRepresentation groupMembership = new ProtocolMapperRepresentation();
-        //groupMembership.setName("group");
-        //groupMembership.setProtocol("openid-connect");
-        //groupMembership.setProtocolMapper("oidc-group-membership-mapper");
-        //groupMembership.getConfig().put("full.path", "false");
-        //groupMembership.getConfig().put("access.token.claim", "true");
-        //groupMembership.getConfig().put("id.token.claim", "true");
-        //groupMembership.getConfig().put("userinfo.token.claim", "true");
-        //groupMembership.getConfig().put("claim.name", "groups");
         ProtocolMapperRepresentation protocolMapperRepresentation = new ProtocolMapperRepresentation();
-        //protocolMapperRepresentation.setName("group");
         protocolMapperRepresentation.setName("Groups Mapper");
         protocolMapperRepresentation.setProtocol("openid-connect");
         protocolMapperRepresentation.setProtocolMapper("oidc-group-membership-mapper");
@@ -178,86 +161,22 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
         protocolMapperRepresentation.getConfig().put("access.token.claim", "true");
         protocolMapperRepresentation.getConfig().put("id.token.claim", "true");
         protocolMapperRepresentation.getConfig().put("userinfo.token.claim", "true");
-        //protocolMapperRepresentation.getConfig().put("claim.name", "groups");
         protocolMapperRepresentation.getConfig().put("claim.name", "group");
 
-        //ClientScopeResource clientScopeResource = realmResource.clientScopes().get(id);
-
-        //clientScopeResource.getProtocolMappers().createMapper(groupMembership);
         clientScopeResource.getProtocolMappers().createMapper(protocolMapperRepresentation);
-
-        //ClientScopeRepresentation updatedClientScope = clientScopeResource.toRepresentation();
         ClientScopeRepresentation clientScopeRepresentation = clientScopeResource.toRepresentation();
         clientScopeResource.update(clientScopeRepresentation);
 
 
 
 
-        // -----------------------------------------------------
-        // TODO: Ver como asignar los roles de esta pagina http://localhost:8080/admin/master/console/#/TiendaDH/clients/e34de373-6ebb-4508-82e4-fb3a5640108f/serviceAccount
-        // Set "Service Account Roles" (manage-users,query-users,view-users) for api-gateway-client
-        //userRepresentation = realmsResource.realm(REALM_NAME).users().search("api-gateway-client").get(0);  // Usuario del client
-        //userResource = realmsResource.realm(REALM_NAME).users().get(userRepresentation.getId());    // Resource del usuario del client
-        //rolesResource = realmsResource.realm(REALM_NAME).roles();   // Resource de todos los roles
-        //List<RoleRepresentation>  roleRepresentationList1 = userResource.roles().realmLevel().listEffective(); // Lista de roles del usuario
-
-        //System.out.println("---- rolesResource");
-        //rolesResource.list().forEach(role -> System.out.println(role.getName()));
-
-        /*
-        ////borrador
-        ClientResource clientResource;
-        //clientResource = realmsResource.realm(REALM_NAME).clients().get("api-gateway-client");
-        clientResource = realmsResource.realm(REALM_NAME).clients().get(
-                realmsResource.realm(REALM_NAME).clients().findByClientId("api-gateway-client").get(0).getId()
-        );
-        //System.out.println("---- client id: " + clientResource.toRepresentation().getClientId());
-        //System.out.println("---- id: " + clientResource.toRepresentation().getId());
-        clientRepresentation = realmsResource.realm(REALM_NAME).clients().findByClientId("api-gateway-client").get(0);
-        System.out.println("---- client id: " + clientRepresentation.getClientId());
-        System.out.println("---- id: " + clientRepresentation.getId());
-
-
-        roleRepresentation = new RoleRepresentation("manage-users", "${role_manage-users}",false);
-        roleRepresentation.setClientRole(true);
-        //roleRepresentation.setContainerId(clientResource.toRepresentation().getId());
-        roleRepresentation.setContainerId(clientRepresentation.getId());
-
-
-        System.out.println("---- roleRepresentation: " + roleRepresentation.getName() + "//" + roleRepresentation.getDescription());
 
 
 
-        clientResource
-                .roles()
-                .create(roleRepresentation);
-        roleRepresentation = new RoleRepresentation("query-users", "${role_query-users}",false);
-        clientResource.roles().create(roleRepresentation);
-        roleRepresentation = new RoleRepresentation("view-users", "${role_view-users}",false);
-        clientResource.roles().create(roleRepresentation);
-        */
-
-
-
-
-
-
-        // Testing
-        //UserPass admin = USERS.get(0);
-        //log.info("Testing getting token for '{}' ...", admin.getUsername());
-        //Keycloak keycloakTesting = KeycloakBuilder.builder().serverUrl(KEYCLOAK_SERVER_URL).realm(REALM_NAME).username(admin.getUsername()).password(admin.getPassword()).clientId(CLIENT_ID).build();
-        //log.info("'{}' token: {}", admin.getUsername(), keycloakTesting.tokenManager().grantToken().getToken());
+        // Finish
         log.info("'{}' initialization completed successfully!", REALM_NAME);
     }
 
-    /*private Map<String, List<String>> getClientRoles(UserPass userPass) {
-        List<String> roles = new ArrayList<>();
-        roles.add(WebSecurityConfig.USER);
-        if ("admin".equals(userPass.getUsername())) {
-            roles.add(WebSecurityConfig.MOVIES_MANAGER);
-        }
-        return Map.of(CLIENT_ID, roles);
-    }*/
 
     @Value
     private static class UserPass {

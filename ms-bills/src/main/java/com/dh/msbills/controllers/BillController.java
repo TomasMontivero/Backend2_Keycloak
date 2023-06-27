@@ -22,7 +22,7 @@ public class BillController {
         return ResponseEntity.ok().body(service.getAllBill());
     }
 
-    // URL: http://localhost:8090/api/v1/bills/findBy/Aaron
+
     @GetMapping("/findBy/{customerBill}")
     public ResponseEntity<List<Bill>> getAll(@PathVariable String customerBill) {
         return ResponseEntity.ok().body(service.findByCustomerId(customerBill));
