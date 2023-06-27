@@ -1,0 +1,55 @@
+---- Desarrollo ----
+
+Preparacion:	
+	-La instancia de Keycloak se creó desde el CMD con el comando:
+		docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:21.0.1 start-dev
+		Y se ejecuta desde Docker Desktop
+	- Las 3 aplicaciones (Gateway, Eureka y el servicio) se abrieron en 3 ventanas de IntelliJ como proyectos separados desde sus POM.
+
+
+Keycloak:
+	- Se crea el realm: "TrabajoPracticoParcial"
+	- Se crea el client "api-gateway-client"
+		Se dejan todas las opciones por defecto y se hacen los siguientes cambios:
+		En la pestaña de "Settings" se configuran los "Access settings" para apuntar al gateway (localhost:8090).
+		En el "Capability config" se activa "Client authentication" y "Service account roles" para requerir la autenticacion y uso de secret para este cliente.
+	- Se crea el realm role: "USER".
+	- Se crea el usuario "user" (password:password) asignandole el rol "USER". 
+	- Tambien se crea el usuario "user2" (password:password) sin rol asignado, para despues hacer pruebas con el endpoint de Bills.
+	
+			
+Gateway:
+	- Se completa el application.properties con los datos de coneccion a Keycloak y al client con su secret. Y se agrega el filter TokenRelay para que el token le llegue a los microservicios.
+	- Se crea el package "configuration" con la clase "SecurityConfig" para hacer uso del login de Keycloak al querer consumir un endpoint por el gateway.
+	- En el POM se agrega la dapendencia "spring-boot-starter-oauth2-client" para que funcione el SecurityConfig.
+	
+	
+Bills:
+	- Al MsBillsApplication se le agrega el @EnableDiscoveryClient para el uso de Eureka. 
+	- Se crea el package "security" y las clases "KeyCloakJwtAuthenticationConverter" y "OAuth2ResourceServerSecurityConfiguration"
+	- En la clase "KeyCloakJwtAuthenticationConverter" se implementan los metodos para leer el token y extraer los roles del usuario.
+		El desarrollo principal está en los metodos:
+		extractResourceRoles() recibe el token y se encarga de llamar a los metodos que extraen datos especificos: extractRoles , extractRolesRealmAccess y extractAud.
+	- En la clase BillController, al endpoint de "/all" se le agrega @PreAuthorize("hasRole('ROLE_USER')")  para restringir su uso solo a usuarios con rol USER.
+	
+	
+
+
+
+---- Testeo ----
+	
+Pasos para hacer pruebas:
+	- Levantar Keycloak y crear un realm importando el archivo realm-export.json
+	- Las 3 aplicaciones (Gateway, Eureka y el servicio) se abrieron en 3 ventanas de IntelliJ como proyectos separados desde sus POM.
+	- Levantar ms-discovery desde el MsDiscoveryApplication
+	- Levantar ms-gateway desde el MsGatewayApplication
+	- Levantar ms-bills desde el MsBillsApplication 
+
+
+Para validar el funcionamiento:
+	- Entrar a Eureka: http://localhost:8761/
+		En la lista de Applications, deben aparecer "MS-BILL" y "MS-GATEWAY"
+	- Consultar el endpoint de Bills desde el puerto del gateway: http://localhost:8090/api/v1/bills/all
+		- Al ser la primer consulta, como no se tiene sesion iniciada, el sistema debe redirigir automaticamente a la pagina de login del realm "TRABAJOPRACTICOPARCIAL" en Keycloak: http://localhost:8080/realms/TrabajoPracticoParcial/protocol/openid-connect/auth
+		- Iniciando sesion con el usuario "user" (password:password), la pagina vuelve a http://localhost:8090/api/v1/bills/all y muestra la informacion de la facturacion, porque el usuario tiene rol USER.
+		- Iniciando sesion con el usuario "user2" (password:password), la pagina vuelve a http://localhost:8090/api/v1/bills/all y devuelve "HTTP ERROR 403" porque el usuario no tiene el rol necesario para realizar la consulta.
