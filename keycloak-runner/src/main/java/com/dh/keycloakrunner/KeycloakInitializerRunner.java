@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.*;
+import org.keycloak.common.constants.ServiceAccountConstants;
 import org.keycloak.representations.idm.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -169,14 +170,16 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
         //groupMembership.getConfig().put("userinfo.token.claim", "true");
         //groupMembership.getConfig().put("claim.name", "groups");
         ProtocolMapperRepresentation protocolMapperRepresentation = new ProtocolMapperRepresentation();
-        protocolMapperRepresentation.setName("group");
+        //protocolMapperRepresentation.setName("group");
+        protocolMapperRepresentation.setName("Groups Mapper");
         protocolMapperRepresentation.setProtocol("openid-connect");
         protocolMapperRepresentation.setProtocolMapper("oidc-group-membership-mapper");
         protocolMapperRepresentation.getConfig().put("full.path", "false");
         protocolMapperRepresentation.getConfig().put("access.token.claim", "true");
         protocolMapperRepresentation.getConfig().put("id.token.claim", "true");
         protocolMapperRepresentation.getConfig().put("userinfo.token.claim", "true");
-        protocolMapperRepresentation.getConfig().put("claim.name", "groups");
+        //protocolMapperRepresentation.getConfig().put("claim.name", "groups");
+        protocolMapperRepresentation.getConfig().put("claim.name", "group");
 
         //ClientScopeResource clientScopeResource = realmResource.clientScopes().get(id);
 
@@ -190,6 +193,49 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
 
 
 
+        // -----------------------------------------------------
+        // TODO: Ver como asignar los roles de esta pagina http://localhost:8080/admin/master/console/#/TiendaDH/clients/e34de373-6ebb-4508-82e4-fb3a5640108f/serviceAccount
+        // Set "Service Account Roles" (manage-users,query-users,view-users) for api-gateway-client
+        //userRepresentation = realmsResource.realm(REALM_NAME).users().search("api-gateway-client").get(0);  // Usuario del client
+        //userResource = realmsResource.realm(REALM_NAME).users().get(userRepresentation.getId());    // Resource del usuario del client
+        //rolesResource = realmsResource.realm(REALM_NAME).roles();   // Resource de todos los roles
+        //List<RoleRepresentation>  roleRepresentationList1 = userResource.roles().realmLevel().listEffective(); // Lista de roles del usuario
+
+        //System.out.println("---- rolesResource");
+        //rolesResource.list().forEach(role -> System.out.println(role.getName()));
+
+        /*
+        ////borrador
+        ClientResource clientResource;
+        //clientResource = realmsResource.realm(REALM_NAME).clients().get("api-gateway-client");
+        clientResource = realmsResource.realm(REALM_NAME).clients().get(
+                realmsResource.realm(REALM_NAME).clients().findByClientId("api-gateway-client").get(0).getId()
+        );
+        //System.out.println("---- client id: " + clientResource.toRepresentation().getClientId());
+        //System.out.println("---- id: " + clientResource.toRepresentation().getId());
+        clientRepresentation = realmsResource.realm(REALM_NAME).clients().findByClientId("api-gateway-client").get(0);
+        System.out.println("---- client id: " + clientRepresentation.getClientId());
+        System.out.println("---- id: " + clientRepresentation.getId());
+
+
+        roleRepresentation = new RoleRepresentation("manage-users", "${role_manage-users}",false);
+        roleRepresentation.setClientRole(true);
+        //roleRepresentation.setContainerId(clientResource.toRepresentation().getId());
+        roleRepresentation.setContainerId(clientRepresentation.getId());
+
+
+        System.out.println("---- roleRepresentation: " + roleRepresentation.getName() + "//" + roleRepresentation.getDescription());
+
+
+
+        clientResource
+                .roles()
+                .create(roleRepresentation);
+        roleRepresentation = new RoleRepresentation("query-users", "${role_query-users}",false);
+        clientResource.roles().create(roleRepresentation);
+        roleRepresentation = new RoleRepresentation("view-users", "${role_view-users}",false);
+        clientResource.roles().create(roleRepresentation);
+        */
 
 
 

@@ -56,6 +56,7 @@ public class KeyCloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
                 .forEachRemaining(r -> rolesWithPrefix.add("ROLE_" + r.asText()));
         final List<GrantedAuthority> authorityList =
                 AuthorityUtils.createAuthorityList(rolesWithPrefix.toArray(new String[0]));
+        System.out.println("---- extractRolesRealmAccess: " + authorityList);
         return authorityList;
     }
 
